@@ -1,63 +1,47 @@
-package test;
-//1935
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Stack;
 
-public class test2 {
-	
-	public static boolean isInteger(String strValue) {
-	    try {
-	      Integer.parseInt(strValue);
-	      return true;
-	    } catch (NumberFormatException ex) {
-	      return false;
-	    }
-	  }
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        String prefix = br.readLine();
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		Stack<String> stack = new Stack<>();
-        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        
-        int cnt = sc.nextInt(); //5
-        sc.nextLine();
-        String input = sc.nextLine(); //ABC*+DE/-
-        
-        alphabet = alphabet.substring(0, cnt); //ABCDE
-
-        for(int i = 0; i < cnt; i++){
-        	String a = String.valueOf(alphabet.charAt(i)); //A,B,C,D,E
-        	if (input.contains(a)){
-        		input = input.replaceAll(a, String.valueOf(sc.nextInt()));
-        		sc.nextLine();
-        	}
+        int[] arr = new int[n];
+        for(int i = 0; i < n; i++) {
+            arr[i] = Integer.parseInt(br.readLine());
         }
-        
-        for (int i = 0; i < input.length(); i++) {
-        	String s = String.valueOf(input.charAt(i));
-        	if (isInteger(s))
-        		stack.push(s);
-        	else {
-        		double b = Double.parseDouble(stack.pop());
-        		double a = Double.parseDouble(stack.pop());
-        		switch(s) {
-        		case"*":
-        			stack.push(String.valueOf(a*b));
-        			break;
-        		case"-":
-        			stack.push(String.valueOf(a-b));
-        			break;
-        		case"/":
-        			stack.push(String.valueOf(a/b));
-        			break;
-        		case"+":
-        			stack.push(String.valueOf(a+b));
-        			break;
-        		}
-        	}
-        }
-        System.out.println(String.format("%.2f", Double.parseDouble(stack.pop())));
-        sc.close();
-        
-	}
 
+        Stack<Double> operand = new Stack<>();
+        int len = prefix.length();
+        for(int i = 0; i < len; i++) {
+            char ch = prefix.charAt(i);
+            if('A' <= ch && ch <= 'Z') {  // operand
+                double d = arr[ch - 'A'];
+                operand.push(d);
+            }else {  // operator
+                double d1 = operand.pop();
+                double d2 = operand.pop();
+                double d3 = 0.0;
+                switch(ch) {
+                    case '+' :
+                        d3 = d2 + d1;
+                        break;
+                    case '-' :
+                        d3 = d2 - d1;
+                        break;
+                    case '*' :
+                        d3 = d2 * d1;
+                        break;
+                    case '/' :
+                        d3 = d2 / d1;
+                        break;
+                }
+                operand.push(d3);
+            }
+        }
+        System.out.printf("%.2f", operand.pop());
+    }
 }
